@@ -98,7 +98,7 @@ class Game2048:
         return numbers2
 
     def score(self):
-        total_score = 0
+        total_score = -2
         for row in self.board:
             total_score += sum(row)
         return total_score

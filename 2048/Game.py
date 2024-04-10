@@ -1,6 +1,7 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLabel
+from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLabel, QPushButton, QDialog, QVBoxLayout
 from PyQt5.QtCore import Qt
+
 from Logic import Game2048
 
 
@@ -21,6 +22,23 @@ def get_tile_color(value):
     return colors.get(value, "#ccc")
 
 
+class RulesWindow(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('Правила игры 2048')
+        self.setGeometry(200, 200, 400, 200)
+
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        rules_label = QLabel("Правила игры 2048:\n\n"
+                             "1. Используйте стрелки на клавиатуре, чтобы перемещать плитки.\n"
+                             "2. Когда две плитки с одинаковым значением касаются, они объединяются в одну, "
+                             "суммируясь.\n"
+                             "3. Цель - получить плитку со значением 2048.")
+        layout.addWidget(rules_label)
+
+
 class Game2048UI(QWidget):
     def __init__(self):
         super().__init__()
@@ -30,15 +48,11 @@ class Game2048UI(QWidget):
     def initUI(self):
         grid = QGridLayout()
         self.setLayout(grid)
-
-        # Set black background color
         self.setStyleSheet("background-color: #7c29d0;")
-
-        self.score_label = QLabel("Score: 0")
+        self.score_label = QLabel("Очки за игру: 0")
         self.score_label.setAlignment(Qt.AlignCenter)
         self.score_label.setStyleSheet("font-size: 20px; font-weight: bold; color: white;")
-        grid.addWidget(self.score_label, 0, 0, 1, 4)  # Add score label on top of the grid
-
+        grid.addWidget(self.score_label, 0, 0, 1, 4)
         self.labels = []
         for i in range(4):
             row = []
@@ -46,13 +60,18 @@ class Game2048UI(QWidget):
                 label = QLabel("")
                 label.setAlignment(Qt.AlignCenter)
                 label.setStyleSheet("font-size: 36px; font-weight: bold; background-color: #ccc; color: white;")
-                grid.addWidget(label, i + 1, j)  # Adjust row index to accommodate score label
+                grid.addWidget(label, i + 1, j)
                 row.append(label)
             self.labels.append(row)
-
         self.setWindowTitle('2048')
         self.setGeometry(100, 100, 400, 500)
         self.setFocus()
+
+        self.rules_button = QPushButton("?")
+        self.rules_button.setStyleSheet("font-size: 20px; font-weight: bold; background-color: #ccc;")
+        self.rules_button.clicked.connect(self.show_rules_window)
+        grid.addWidget(self.rules_button, 0, 3)
+
         self.update_ui(self.game.board)
 
     def keyPressEvent(self, event):
@@ -80,7 +99,11 @@ class Game2048UI(QWidget):
                         f"background-color: {color}; color: white; font-size: 36px; font-weight: bold;")
 
         # Update score label
-        self.score_label.setText(f"Score: {self.game.score()}")
+        self.score_label.setText(f"Очки за игру: {self.game.score()}")
+
+    def show_rules_window(self):
+        rules_window = RulesWindow()
+        rules_window.exec_()
 
 
 if __name__ == "__main__":
