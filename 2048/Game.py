@@ -26,7 +26,7 @@ class RulesWindow(QDialog):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Правила игры 2048')
-        self.setGeometry(200, 200, 400, 200)
+        self.setGeometry(200, 200, 100, 100)
 
         layout = QVBoxLayout()
         self.setLayout(layout)
@@ -35,8 +35,19 @@ class RulesWindow(QDialog):
                              "1. Используйте стрелки на клавиатуре, чтобы перемещать плитки.\n"
                              "2. Когда две плитки с одинаковым значением касаются, они объединяются в одну, "
                              "суммируясь.\n"
-                             "3. Цель - получить плитку со значением 2048.")
+                             "3. Цель - получить плитку со значением 2048.\n"
+                             "---------------------------------------------\n"
+                             "НАЖМИТЕ ОК, ЧТОБЫ ПЕРЕЙТИ К ИГРЕ")
         layout.addWidget(rules_label)
+
+        ok_button = QPushButton("OK")
+        ok_button.clicked.connect(self.close_rules_and_show_game)
+        layout.addWidget(ok_button)
+
+    def close_rules_and_show_game(self):
+        self.close()
+        self.game_window = Game2048UI()
+        self.game_window.show()
 
 
 class Game2048UI(QWidget):
@@ -67,10 +78,7 @@ class Game2048UI(QWidget):
         self.setGeometry(100, 100, 400, 500)
         self.setFocus()
 
-        self.rules_button = QPushButton("?")
-        self.rules_button.setStyleSheet("font-size: 20px; font-weight: bold; background-color: #ccc;")
-        self.rules_button.clicked.connect(self.show_rules_window)
-        grid.addWidget(self.rules_button, 0, 3)
+
 
         self.update_ui(self.game.board)
 
@@ -97,8 +105,6 @@ class Game2048UI(QWidget):
                     color = get_tile_color(board[i][j])
                     self.labels[i][j].setStyleSheet(
                         f"background-color: {color}; color: white; font-size: 36px; font-weight: bold;")
-
-        # Update score label
         self.score_label.setText(f"Очки за игру: {self.game.score()}")
 
     def show_rules_window(self):
@@ -108,6 +114,6 @@ class Game2048UI(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    game = Game2048UI()
-    game.show()
+    rules_window = RulesWindow()
+    rules_window.show()
     sys.exit(app.exec_())
