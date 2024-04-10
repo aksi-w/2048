@@ -31,14 +31,22 @@ class Game2048UI(QWidget):
         grid = QGridLayout()
         self.setLayout(grid)
 
+        # Set black background color
+        self.setStyleSheet("background-color: #7c29d0;")
+
+        self.score_label = QLabel("Score: 0")
+        self.score_label.setAlignment(Qt.AlignCenter)
+        self.score_label.setStyleSheet("font-size: 20px; font-weight: bold; color: white;")
+        grid.addWidget(self.score_label, 0, 0, 1, 4)  # Add score label on top of the grid
+
         self.labels = []
         for i in range(4):
             row = []
             for j in range(4):
                 label = QLabel("")
                 label.setAlignment(Qt.AlignCenter)
-                label.setStyleSheet("font-size: 36px; font-weight: bold; background-color: #ccc;")
-                grid.addWidget(label, i, j)
+                label.setStyleSheet("font-size: 36px; font-weight: bold; background-color: #ccc; color: white;")
+                grid.addWidget(label, i + 1, j)  # Adjust row index to accommodate score label
                 row.append(label)
             self.labels.append(row)
 
@@ -64,12 +72,15 @@ class Game2048UI(QWidget):
             for j in range(4):
                 if board[i][j] == 0:
                     self.labels[i][j].setText("")
-                    self.labels[i][j].setStyleSheet("background-color: #ccc;")
+                    self.labels[i][j].setStyleSheet("background-color: #ccc; color: white;")
                 else:
                     self.labels[i][j].setText(str(board[i][j]))
                     color = get_tile_color(board[i][j])
                     self.labels[i][j].setStyleSheet(
                         f"background-color: {color}; color: white; font-size: 36px; font-weight: bold;")
+
+        # Update score label
+        self.score_label.setText(f"Score: {self.game.score()}")
 
 
 if __name__ == "__main__":

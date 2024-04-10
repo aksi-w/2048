@@ -34,15 +34,18 @@ class Game2048:
 
     @staticmethod
     def slide(row):
+        merged = [False] * len(row)
         row = Game2048.filter_zero(row)
         for i in range(len(row) - 1):
-            if row[i] == row[i + 1]:
+            if row[i] == row[i + 1] and not merged[i] and not merged[i + 1]:
                 row[i] *= 2
                 row[i + 1] = 0
+                merged[i] = True
+                merged[i + 1] = True
         row = Game2048.filter_zero(row)
         while len(row) < 4:
             row.append(0)
-        return row
+        return row, sum(row)
 
     def move_tiles(self, numbers, direction):
         if direction == "left":
@@ -63,14 +66,14 @@ class Game2048:
     def slide_left(self, numbers):
         numbers2 = []
         for row in numbers:
-            numbers2.append(self.slide(row))
+            numbers2.append(self.slide(row)[0])
         return numbers2
 
     def slide_right(self, numbers):
         numbers2 = []
         for row in numbers:
             row = row[::-1]
-            row = self.slide(row)
+            row = self.slide(row)[0]
             row = row[::-1]
             numbers2.append(row)
         return numbers2
@@ -79,7 +82,7 @@ class Game2048:
         numbers2 = [[] for _ in range(4)]
         for i in range(4):
             row = [numbers[j][i] for j in range(4)]
-            row = self.slide(row)
+            row = self.slide(row)[0]
             for j in range(4):
                 numbers2[j].append(row[j])
         return numbers2
@@ -88,8 +91,14 @@ class Game2048:
         numbers2 = [[] for _ in range(4)]
         for i in range(4):
             row = [numbers[j][i] for j in range(3, -1, -1)]
-            row = self.slide(row)
+            row = self.slide(row)[0]
             row.reverse()
             for j in range(4):
                 numbers2[j].append(row[j])
         return numbers2
+
+    def score(self):
+        total_score = 0
+        for row in self.board:
+            total_score += sum(row)
+        return total_score
