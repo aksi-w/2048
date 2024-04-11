@@ -1,10 +1,10 @@
 import random
 
-
 class Game2048:
     def __init__(self):
         self.board = [[0] * 4 for _ in range(4)]
         self.board = self.add_random_tile(self.board)
+        self.moved = False
 
     @staticmethod
     def set_tile_with_number_two(numbers):
@@ -48,6 +48,7 @@ class Game2048:
         return row, sum(row)
 
     def move_tiles(self, numbers, direction):
+        self.moved = False
         if direction == "left":
             return self.slide_left(numbers)
         elif direction == "right":
@@ -66,35 +67,44 @@ class Game2048:
     def slide_left(self, numbers):
         numbers2 = []
         for row in numbers:
-            numbers2.append(self.slide(row)[0])
+            new_row, _ = self.slide(row)
+            if new_row != row:
+                self.moved = True
+            numbers2.append(new_row)
         return numbers2
 
     def slide_right(self, numbers):
         numbers2 = []
         for row in numbers:
             row = row[::-1]
-            row = self.slide(row)[0]
-            row = row[::-1]
-            numbers2.append(row)
+            new_row, _ = self.slide(row)
+            new_row = new_row[::-1]
+            if new_row != row[::-1]:
+                self.moved = True
+            numbers2.append(new_row)
         return numbers2
 
     def slide_up(self, numbers):
         numbers2 = [[] for _ in range(4)]
         for i in range(4):
             row = [numbers[j][i] for j in range(4)]
-            row = self.slide(row)[0]
+            new_row, _ = self.slide(row)
+            if new_row != row:
+                self.moved = True
             for j in range(4):
-                numbers2[j].append(row[j])
+                numbers2[j].append(new_row[j])
         return numbers2
 
     def slide_down(self, numbers):
         numbers2 = [[] for _ in range(4)]
         for i in range(4):
             row = [numbers[j][i] for j in range(3, -1, -1)]
-            row = self.slide(row)[0]
-            row.reverse()
+            new_row, _ = self.slide(row)
+            new_row.reverse()
+            if new_row != row:
+                self.moved = True
             for j in range(4):
-                numbers2[j].append(row[j])
+                numbers2[j].append(new_row[j])
         return numbers2
 
     def score(self):
@@ -105,7 +115,7 @@ class Game2048:
 
     def has_won(self):
         for row in self.board:
-            if 128 in row:
+            if 2048 in row:
                 return True
         return False
 
