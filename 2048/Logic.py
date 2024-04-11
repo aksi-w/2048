@@ -102,3 +102,19 @@ class Game2048:
         for row in self.board:
             total_score += sum(row)
         return total_score
+
+    def has_won(self):
+        for row in self.board:
+            if 128 in row:
+                return True
+        return False
+
+    def has_lost(self):
+        if not self.has_empty_tile(self.board):
+            for i in range(4):
+                for j in range(4):
+                    if (i < 3 and self.board[i][j] == self.board[i + 1][j]) or \
+                            (j < 3 and self.board[i][j] == self.board[i][j + 1]):
+                        return False
+            return True
+        return False

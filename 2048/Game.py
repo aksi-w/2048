@@ -94,6 +94,36 @@ class Game2048UI(QWidget):
         self.game.board = self.game.add_random_tile(self.game.board)
         self.update_ui(self.game.board)
 
+        if self.game.has_won():
+            self.show_win_dialog()
+        elif self.game.has_lost():
+            self.show_lose_dialog()
+
+    def show_win_dialog(self):
+        win_dialog = QDialog(self)
+        win_dialog.setWindowTitle("Вы выиграли!")
+        layout = QVBoxLayout()
+        win_dialog.setLayout(layout)
+        win_label = QLabel("Поздравляем! Вы собрали плитку 2048 и выиграли.")
+        layout.addWidget(win_label)
+        ok_button = QPushButton("Ок")
+        ok_button.clicked.connect(win_dialog.close)
+        layout.addWidget(ok_button)
+        win_dialog.exec_()
+
+    def show_lose_dialog(self):
+        lose_dialog = QDialog(self)
+        lose_dialog.setWindowTitle("Вы проиграли!")
+        layout = QVBoxLayout()
+        lose_dialog.setLayout(layout)
+        lose_label = QLabel("К сожалению, вы проиграли. Больше нет возможных ходов.")
+        layout.addWidget(lose_label)
+        ok_button = QPushButton("Ок")
+        ok_button.clicked.connect(lose_dialog.close)
+        layout.addWidget(ok_button)
+        lose_dialog.exec_()
+
+
     def update_ui(self, board):
         for i in range(4):
             for j in range(4):
