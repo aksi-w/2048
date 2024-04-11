@@ -79,7 +79,6 @@ class Game2048UI(QWidget):
         self.setFocus()
 
 
-
         self.update_ui(self.game.board)
 
     def keyPressEvent(self, event):
@@ -106,6 +105,10 @@ class Game2048UI(QWidget):
         win_dialog.setLayout(layout)
         win_label = QLabel("Поздравляем! Вы собрали плитку 2048 и выиграли.")
         layout.addWidget(win_label)
+        restart_button = QPushButton("Перезагрузить игру")
+        restart_button.clicked.connect(self.restart_game)
+        restart_button.clicked.connect(win_dialog.close)
+        layout.addWidget(restart_button)
         ok_button = QPushButton("Ок")
         ok_button.clicked.connect(win_dialog.close)
         layout.addWidget(ok_button)
@@ -118,6 +121,10 @@ class Game2048UI(QWidget):
         lose_dialog.setLayout(layout)
         lose_label = QLabel("К сожалению, вы проиграли. Больше нет возможных ходов.")
         layout.addWidget(lose_label)
+        restart_button = QPushButton("Перезагрузить игру")
+        restart_button.clicked.connect(self.restart_game)
+        restart_button.clicked.connect(lose_dialog.close)
+        layout.addWidget(restart_button)
         ok_button = QPushButton("Ок")
         ok_button.clicked.connect(lose_dialog.close)
         layout.addWidget(ok_button)
@@ -140,6 +147,11 @@ class Game2048UI(QWidget):
     def show_rules_window(self):
         rules_window = RulesWindow()
         rules_window.exec_()
+
+    def restart_game(self):
+        self.game = Game2048()
+        self.update_ui(self.game.board)
+        self.score_label.setText(f"Очки за игру: {self.game.score()}")
 
 
 if __name__ == "__main__":
