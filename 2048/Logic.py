@@ -61,8 +61,10 @@ class Game2048:
             return numbers
 
     def add_random_tile(self, numbers):
-        numbers = self.set_tile_with_number_two(numbers)
-        return numbers
+        if self.has_empty_tile(numbers):
+            return self.set_tile_with_number_two(numbers)
+        else:
+            return numbers
 
     def slide_left(self, numbers):
         numbers2 = []
